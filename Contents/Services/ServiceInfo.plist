@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>URL</key>
+	<dict>
+		<key>MovieTube</key>
+		<dict>
+			<key>URLPatterns</key>
+			<array>
+				<string>http://www\.movietube\.cc/watch\.php\?v=.+</string>
+				<string>http://www\.movietubenow\.com/watch\.php\?v=.+</string>
+				<string>http://m\.genvideos\.com/get_video\?.+</string>
+			</array>
+			<key>TestURLs</key>
+			<array>
+				<string>http://m.genvideos.com/get_video?token=FnQeIZfv6E5-OUtCGya0eb4tlGs-EvJeiOKiGazDbh1gfSNiF9lL-rdt378jBTvTd0KPudhQ99YsFyvL6XE8pQsTPG7xy0yu55EYbFj9Jwxt336eVuwRXz9ysfqE_0hvRtkHLCPElhXGT-LdArr4ov7fruTadwQuXJnSH8yTfzajZcasYcH0gnXKhbGNTPsr6V4Ln2u4Uoecax2p_4U_HEon-JrueOFqx-Y-8gBBBBQ4TC_Dlw5i5D7Jdgsyv-r855piqPgh_XLf_tYFW7UqmAwzaFDZCSLVgZU62yVGUKK-uoprTHEcNghNvHCB16yRqwTfS_yeidnTvYcU31uMEuC73EvrhaikwX1_PKYBMgoL-ukRZQfhuSbboSNE3jMO8fkvKOJApmpBU7Cy9ZRjYk58eHppBGmCF7hqQlqB-ZYqvfOkMWsPQPdGlMuD0p_8VpekGCv1SPT3Rw8L-7XbcnD_Uh4vsUZioSL_O1IvPVutskTNVyCmgxdpgRU90Nf4</string>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>

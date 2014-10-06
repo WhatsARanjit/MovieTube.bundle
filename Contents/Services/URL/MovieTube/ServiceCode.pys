@@ -1,0 +1,43 @@
+import urlparse
+RE_VIDEO_URL = Regex('source\+data\-res%3D%22\d+%22\+src%3D%22([A-Za-z0-9%_\.\-]+)%22')
+RE_RATING = Regex('(\d+)')
+
+####################################################################################################
+def MetadataObjectForURL(url):
+    page = HTML.ElementFromURL(url)
+    html = HTTP.Request(url).content
+    title = page.xpath("//head/title//text()")
+    description = page.xpath("//head//meta[@name='description']")[0].get('content')
+    thumb = page.xpath("//head//link[@rel='image_src']")[0].get('href')
+    #rating = RE_RATING.search(page).group(1)
+
+    return VideoClipObject(
+        title = title,
+        summary = description,
+        thumb = thumb
+    )
+
+####################################################################################################
+def MediaObjectsForURL(url):
+    return [
+        MediaObject(
+            parts = [
+                PartObject(
+                    key=Callback(PlayVideo, url = url)
+                )
+            ],
+            container = 'mp4',
+            audio_codec = AudioCodec.AAC,
+            video_codec = VideoCodec.H264,
+            optimized_for_streaming = True,
+            video_resolution = '720'
+        )
+    ]
+
+####################################################################################################
+@indirect
+def PlayVideo(url):
+    page = HTTP.Request(url).content
+    video_url = RE_VIDEO_URL.search(page).group(1).decode('unicode_escape')
+    #return Redirect(video_url)
+    return IndirectResponse(VideoClipObject, key=video_url)
