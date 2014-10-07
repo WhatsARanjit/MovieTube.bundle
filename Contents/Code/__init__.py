@@ -1,6 +1,8 @@
 import re
 
 NAME = 'MovieTube'
+ICON = 'icon-default.png'
+PREFIX = '/video/movietube'
 MOVIES_HOST = 'http://www.movietubenow.com'
 MOVEIES_CINEMA = '%s/search.php?QuickSelectType=4|Score' % MOVIES_HOST
 MOVIES_SEARCH = '%s/index.php' % MOVIES_HOST
@@ -17,9 +19,12 @@ def Start():
 
     ObjectContainer.title1 = NAME
     HTTP.CacheTime = CACHE_1HOUR
+    DirectoryObject.thumb = R(ICON)
+    EpisodeObject.thumb = R(ICON)
+    VideoClipObject.thumb = R(ICON)
 
 ##########################################################################
-@handler('/video/movietube', NAME)
+@handler(PREFIX, NAME, art=ART, thumb=THUMB)
 def MainMenu():
 
     oc = ObjectContainer()
@@ -29,7 +34,7 @@ def MainMenu():
     return oc
 
 ##########################################################################
-@route('/video/movietube/incinema')
+@route(PREFIX + '/incinema')
 def InCinema():
 
     oc = ObjectContainer(title2=L('incinema'))
@@ -55,7 +60,7 @@ def InCinema():
             thumb = re.findall(RE_THUMB, title[0])
             summary = re.findall(RE_SUMMARY, result)
 
-            oc.add(EpisodeObject(
+            oc.add(VideoClipObject(
                 url = url,
                 title = title[1],
                 thumb = thumb[0],
