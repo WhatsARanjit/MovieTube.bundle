@@ -7,7 +7,10 @@ def MetadataObjectForURL(url):
     page = HTML.ElementFromURL(url)
     html = HTTP.Request(url).content
     title = page.xpath("//head/title//text()")
-    description = page.xpath("//head//meta[@name='description']")[0].get('content')
+    try:
+      description = page.xpath("//head//meta[@name='description']")[0].get('content')
+    except:
+      description = ''
     thumb = page.xpath("//head//link[@rel='image_src']")[0].get('href')
     #rating = RE_RATING.search(page).group(1)
 
@@ -39,5 +42,6 @@ def MediaObjectsForURL(url):
 def PlayVideo(url):
     page = HTTP.Request(url).content
     video_url = RE_VIDEO_URL.search(page).group(1).decode('unicode_escape')
-    #return Redirect(video_url)
-    return IndirectResponse(VideoClipObject, key=video_url)
+    Log(url)
+    return Redirect(video_url)
+    #return IndirectResponse(VideoClipObject, key=video_url)

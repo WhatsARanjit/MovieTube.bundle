@@ -24,7 +24,7 @@ def Start():
     VideoClipObject.thumb = R(ICON)
 
 ##########################################################################
-@handler(PREFIX, NAME, art=ART, thumb=THUMB)
+@handler(PREFIX, NAME, thumb=ICON)
 def MainMenu():
 
     oc = ObjectContainer()
@@ -45,12 +45,6 @@ def InCinema():
     ))
     results = re.findall(RE_SEARCH, req.content)
 
-    #oc.add(EpisodeObject(
-    #    url = 'http://www.movietubenow.com/watch.php?v=4xGNPihcAf8',
-    #    title = 'This Is Where I Leave You (2014)',
-    #    summary = results[0]
-    #))
-
     for result in results:
 
         try:
@@ -60,14 +54,25 @@ def InCinema():
             thumb = re.findall(RE_THUMB, title[0])
             summary = re.findall(RE_SUMMARY, result)
 
-            oc.add(VideoClipObject(
+            # Goes way too slow
+            #inf = HTTP.Request(MOVIES_SEARCH, headers=HTTP_HEADERS, values=dict(
+            #    c='result',
+            #    a='getplayerinfo',
+            #    p='{"KeyWord":"' + id[0] + '"}'
+            #))
+            #Log.Info(inf.content)
+
+            oc.add(EpisodeObject(
                 url = url,
                 title = title[1],
                 thumb = thumb[0],
                 summary = summary[1],
             ))
+
         except:
-            #raise Ex.MediaNotAvailable
-            Log(id)
+            try:
+                Log.Error('Failed ID: ' + id[0])
+            except:
+                Log.Error(id)
 
     return oc
