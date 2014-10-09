@@ -1,4 +1,6 @@
 import re
+import os
+Log(os.getcwd())
 
 NAME = 'MovieTube'
 ICON = 'icon-default.png'
