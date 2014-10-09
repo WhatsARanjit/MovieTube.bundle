@@ -1,7 +1,10 @@
 #!/usr/local/bin/python
-import httplib, urllib, re
+import urllib,urllib2, re, os
 
-MOVIES_HOST = 'http://www.movietubenow.com'
+CWD = '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/MovieTube.bundle/Contents/Resources'
+
+#MOVIES_HOST = 'http://www.movietubenow.com'
+MOVIES_HOST = 'http://www.movietube.cc'
 MOVIES_SEARCH = '%s/index.php' % MOVIES_HOST
 HTTP_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36'
@@ -12,7 +15,7 @@ INCINEMA_POST = urllib.urlencode({
   'p':'{"Page":"1","NextToken":"","VideoYoutubeType":"English","Genere":"","Year":"","Sortby":"Score"}'
 })
 RE_SEARCH = r'<tr.+?>.*?</tr>'
-RE_ID = r'watch\.php\?v=([a-zA-Z0-9]+)'
+RE_ID = r'watch\.php\?v=([a-zA-Z0-9\-]+)'
 RE_URL = r'<a.+?>(.*?)</a>'
 RE_THUMB = r'src="(.+?)"'
 RE_SUMMARY = r'<h3_light class="text"></h3_light><br/><h3_light class="text">(.+?)</h3_light>'
@@ -20,8 +23,11 @@ RE_DOCS = r'(?:content|src)="(https://docs\.google\.com/file/.*?/preview)">'
 
 # Trying pulling the URL
 try:
+    print "=> Change directory to " + CWD + "..."
+    os.chdir(CWD)
     print "=> Accessing search URL..."
-    incinema = urllib.urlopen(MOVIES_SEARCH, INCINEMA_POST, HTTP_HEADERS)
+    req = urllib2.Request(MOVIES_SEARCH, INCINEMA_POST, HTTP_HEADERS)
+    incinema = urllib2.urlopen(req)
     results = re.findall(RE_SEARCH, incinema.read())
 
 except Exception as error:
@@ -29,11 +35,12 @@ except Exception as error:
     print type(error)
     print error.args
     print error
+    raise
 
 else:
     print "=> Opening file..."
     f = open('incinema.xml', 'w')
-
+    
     for result in results:
         # Try finding all the elements
         try:
@@ -50,7 +57,8 @@ else:
                 'a':'getplayerinfo',
                 'p':'{"KeyWord":"' + id[0] + '"}'
             })
-            video = urllib.urlopen(MOVIES_SEARCH, params, HTTP_HEADERS).read()
+            req2 = urllib2.Request(MOVIES_SEARCH, params, HTTP_HEADERS)
+            video = urllib2.urlopen(req2).read()
 
             # See if there is a Google Docs URL
             try:
@@ -71,19 +79,24 @@ else:
             print "==> Setting video_url..."
             if gdocs:
                 video_url = gdocs
+                source = 'Google Docs'
             elif video.find('vjplayer') > -1:
-                expr = r'src="(.*?)"'
-                video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+                expr = r'src="(https?://.*?)"'
+                video_url = re.findall(expr, urllib2.unquote(video).decode('utf8'))[0]
+                source = 'VJ Player'
             elif video.find('vkplayer') > -1:
-                expr = r'data="(.*?)"'
-                video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+                expr = r'data="(https?://.*?)"'
+                video_url = re.findall(expr, urllib2.unquote(video).decode('utf8'))[0]
+                source = 'VK Player'
             elif video.find('uplayer') > -1:
-                expr = r'src="(.*?)"'
-                video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+                expr = r'src="(https?://.*?)"'
+                video_url = re.findall(expr, urllib2.unquote(video).decode('utf8'))[0]
+                source = 'U Player'
             else:
                 video_url = video
+                source = 'None'
 
-            data = "<item>\n\t<title>%s</title>\n\t<summary>%s</summary>\n\t<thumb>%s</thumb>\n\t<video_url>%s</video_url>\n</item>\n" % (title[1], summary[1], thumb[0], video_url)
+            data = "<item>\n\t<title>%s</title>\n\t<summary>%s</summary>\n\t<thumb>%s</thumb>\n\t<video_url>%s</video_url>\n\t<source>%s</source>\n</item>\n" % (title[1], summary[1], thumb[0], video_url, source)
             print "==> Writing data to XML file..."
             f.write(data)
 
