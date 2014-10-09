@@ -10,6 +10,11 @@ RE_ID = r'watch\.php\?v=([a-zA-Z0-9]+)'
 XMLDIR = '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/MovieTube.bundle/Contents/Resources'
 
 ####################################################################################################
+def NormalizeURL(url):
+
+    return url
+
+####################################################################################################
 def MetadataObjectForURL(url):
     try:
         parser = etree.XMLParser(recover=True)
@@ -31,7 +36,7 @@ def MetadataObjectForURL(url):
         return VideoClipObject(
             title = title,
             summary = summary,
-            thumb = thumb
+            thumb = Resource.ContentsOfURLWithFallback(url=thumb)
         )
 
 ####################################################################################################
@@ -54,49 +59,7 @@ def MediaObjectsForURL(url):
 ####################################################################################################
 #@indirect
 def PlayVideo(url):
-#    try:
-#        id = re.findall(RE_ID, url)
-#        params = urllib.urlencode({
-#            'c':'result',
-#            'a':'getplayerinfo',
-#            'p':'{"KeyWord":"' + id[0] + '"}'
-#        })
-#        req2 = urllib2.Request(MOVIES_SEARCH, params, HTTP_HEADERS)
-#        video = urllib2.urlopen(req2).read()
-#
-#        # See if there is a Google Docs URL
-#        try:
-#            gdocs = re.findall(RE_DOCS, video)[0]
-#        except:
-#            gdocs = ''
-#
-#    except IndexError as error:
-#        pass
-#
-#    except Exception as error:
-#        Log.Error(error)
-#        #print "Could not POST for clip information"
-#        #print type(error)
-#        #print error.args
-#        #print error
-#
-#    else:
-#        if gdocs:
-#            video_url = gdocs
-#        elif video.find('vjplayer') > -1:
-#            expr = r'src="(.*?)"'
-#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
-#        elif video.find('vkplayer') > -1:
-#            expr = r'data="(.*?)"'
-#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
-#        elif video.find('uplayer') > -1:
-#            expr = r'src="(.*?)"'
-#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
-#        else:
-#            video_url = video
-#
         return Redirect(url)
-        #return Redirect(video_url)
-        #return IndirectResponse(VideoClipObject, key=video_url)
+        #return IndirectResponse(VideoClipObject, key=url)
 
 ####################################################################################################

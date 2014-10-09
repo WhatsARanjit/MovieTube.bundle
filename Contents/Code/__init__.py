@@ -5,7 +5,7 @@ from lxml import etree
 NAME = 'MovieTube'
 ICON = 'icon-default.png'
 PREFIX = '/video/movietube'
-XMLDIR = '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/MovieTube.bundle/Contents/Resources'
+XMLDIR = Prefs['xmldir']
 
 ##########################################################################
 def Start():
