@@ -40,7 +40,7 @@ except Exception as error:
 else:
     print "=> Opening file..."
     f = open('incinema.xml', 'w')
-    f.write("<?xml version=\"1.0\"?>\n")
+    f.write("<?xml version=\"1.0\"?>\n<items>\n")
     
     for result in results:
         # Try finding all the elements
@@ -97,9 +97,10 @@ else:
                 video_url = video
                 source = 'None'
 
-            data = "\t<item>\n\t\t<title>%s</title>\n\t\t<summary>%s</summary>\n\t\t<thumb>%s</thumb>\n\t\t<video_url>%s</video_url>\n\t<\tsource>%s</source>\n\t</item>\n" % (title[1], summary[1], thumb[0], video_url, source)
+            data = "\t<item>\n\t\t<title>%s</title>\n\t\t<summary>%s</summary>\n\t\t<thumb>%s</thumb>\n\t\t<video_url>%s</video_url>\n\t\t<source>%s</source>\n\t</item>\n" % (title[1], summary[1], thumb[0], video_url, source)
             print "==> Writing data to XML file..."
             f.write(data)
 
     print "=> Closing file..."
+    f.write("</items>\n")
     f.close()

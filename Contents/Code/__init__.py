@@ -1,20 +1,11 @@
 import re
-import os
-Log(os.getcwd())
+#import xml.etree.ElementTree as ET
+from lxml import etree
 
 NAME = 'MovieTube'
 ICON = 'icon-default.png'
 PREFIX = '/video/movietube'
-MOVIES_HOST = 'http://www.movietubenow.com'
-MOVEIES_CINEMA = '%s/search.php?QuickSelectType=4|Score' % MOVIES_HOST
-MOVIES_SEARCH = '%s/index.php' % MOVIES_HOST
-
-HTTP_HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 6_0_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A523 Safari/8536.25'}
-RE_SEARCH = r'<tr.+?>.*?</tr>'
-RE_ID = r'watch\.php\?v=([a-zA-Z0-9]+)'
-RE_URL = r'<a.+?>(.*?)</a>'
-RE_THUMB = r'src="(.+?)"'
-RE_SUMMARY = r'<h3_light class="text"></h3_light><br/><h3_light class="text">(.+?)</h3_light>'
+XMLDIR = '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/MovieTube.bundle/Contents/Resources'
 
 ##########################################################################
 def Start():
@@ -40,41 +31,31 @@ def MainMenu():
 def InCinema():
 
     oc = ObjectContainer(title2=L('incinema'))
-    req = HTTP.Request(MOVIES_SEARCH, headers=HTTP_HEADERS, values=dict(
-        c='song',
-        a='retrieve',
-        p='{"Page":"1","NextToken":"","VideoYoutubeType":"English","Genere":"","Year":"","Sortby":"Score"}'
-    ))
-    results = re.findall(RE_SEARCH, req.content)
+    parser = etree.XMLParser(recover=True)
+    xml = '%s/incinema.xml' % XMLDIR
+    list = etree.parse(xml, parser=parser).getroot()
 
-    for result in results:
-
+    for result in list.xpath("//items/item"):
         try:
-            id = re.findall(RE_ID, result) 
-            url = MOVIES_HOST + '/watch.php?v=' + id[0]
-            title = re.findall(RE_URL, result)
-            thumb = re.findall(RE_THUMB, title[0])
-            summary = re.findall(RE_SUMMARY, result)
+            title = result.xpath("./title/text()")[0]
+            url = result.xpath("./video_url/text()")[0]
+            thumb = result.xpath("./thumb/text()")[0]
+            summary = result.xpath("./summary/text()")[0]
 
-            # Goes way too slow
-            #inf = HTTP.Request(MOVIES_SEARCH, headers=HTTP_HEADERS, values=dict(
-            #    c='result',
-            #    a='getplayerinfo',
-            #    p='{"KeyWord":"' + id[0] + '"}'
-            #))
-            #Log.Info(inf.content)
+        except IndexError:
+            pass
 
+        except Exception as error:
+            Log.Exception(type(error))
+            Log.Exception(error.args)
+            Log.Exception(error)
+
+        else:
             oc.add(EpisodeObject(
+                title = title,
                 url = url,
-                title = title[1],
-                thumb = thumb[0],
-                summary = summary[1],
+                thumb = thumb,
+                summary = summary,
             ))
-
-        except:
-            try:
-                Log.Error('Failed ID: ' + id[0])
-            except:
-                Log.Error(id)
 
     return oc
