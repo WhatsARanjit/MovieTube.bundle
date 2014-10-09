@@ -1,24 +1,38 @@
-import urlparse
-RE_VIDEO_URL = Regex('source\+data\-res%3D%22\d+%22\+src%3D%22([A-Za-z0-9%_\.\-]+)%22')
-RE_RATING = Regex('(\d+)')
+import httplib, urllib, re
+from lxml import etree
+
+MOVIES_HOST = 'http://www.movietubenow.com'
+MOVIES_SEARCH = '%s/index.php' % MOVIES_HOST
+HTTP_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36'
+}
+RE_ID = r'watch\.php\?v=([a-zA-Z0-9]+)'
+XMLDIR = '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-ins/MovieTube.bundle/Contents/Resources'
 
 ####################################################################################################
 def MetadataObjectForURL(url):
-    page = HTML.ElementFromURL(url)
-    html = HTTP.Request(url).content
-    title = page.xpath("//head/title//text()")
     try:
-      description = page.xpath("//head//meta[@name='description']")[0].get('content')
-    except:
-      description = ''
-    thumb = page.xpath("//head//link[@rel='image_src']")[0].get('href')
-    #rating = RE_RATING.search(page).group(1)
+        parser = etree.XMLParser(recover=True)
+        xml = '%s/incinema.xml' % XMLDIR
+        list = etree.parse(xml, parser=parser).getroot()
 
-    return VideoClipObject(
-        title = title,
-        summary = description,
-        thumb = thumb
-    )
+        xtitle = "//items/item[video_url='%s']/%s/text()" % (url,'title')
+        xsummary = "//items/item[video_url='%s']/%s/text()" % (url,'summary')
+        xthumb = "//items/item[video_url='%s']/%s/text()" % (url,'thumb')
+        
+        title = list.xpath(xtitle)[0]
+        summary = list.xpath(xsummary)[0]
+        thumb = list.xpath(xthumb)[0]
+
+    except:
+        Log.Exception("Couldn't read XML file")
+
+    else: 
+        return VideoClipObject(
+            title = title,
+            summary = summary,
+            thumb = thumb
+        )
 
 ####################################################################################################
 def MediaObjectsForURL(url):
@@ -38,10 +52,51 @@ def MediaObjectsForURL(url):
     ]
 
 ####################################################################################################
-@indirect
+#@indirect
 def PlayVideo(url):
-    page = HTTP.Request(url).content
-    video_url = RE_VIDEO_URL.search(page).group(1).decode('unicode_escape')
-    Log(url)
-    return Redirect(video_url)
-    #return IndirectResponse(VideoClipObject, key=video_url)
+#    try:
+#        id = re.findall(RE_ID, url)
+#        params = urllib.urlencode({
+#            'c':'result',
+#            'a':'getplayerinfo',
+#            'p':'{"KeyWord":"' + id[0] + '"}'
+#        })
+#        req2 = urllib2.Request(MOVIES_SEARCH, params, HTTP_HEADERS)
+#        video = urllib2.urlopen(req2).read()
+#
+#        # See if there is a Google Docs URL
+#        try:
+#            gdocs = re.findall(RE_DOCS, video)[0]
+#        except:
+#            gdocs = ''
+#
+#    except IndexError as error:
+#        pass
+#
+#    except Exception as error:
+#        Log.Error(error)
+#        #print "Could not POST for clip information"
+#        #print type(error)
+#        #print error.args
+#        #print error
+#
+#    else:
+#        if gdocs:
+#            video_url = gdocs
+#        elif video.find('vjplayer') > -1:
+#            expr = r'src="(.*?)"'
+#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+#        elif video.find('vkplayer') > -1:
+#            expr = r'data="(.*?)"'
+#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+#        elif video.find('uplayer') > -1:
+#            expr = r'src="(.*?)"'
+#            video_url = re.findall(expr, urllib.unquote(video).decode('utf8'))[0]
+#        else:
+#            video_url = video
+#
+        return Redirect(url)
+        #return Redirect(video_url)
+        #return IndirectResponse(VideoClipObject, key=video_url)
+
+####################################################################################################

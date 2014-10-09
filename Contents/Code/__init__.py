@@ -43,11 +43,9 @@ def InCinema():
             summary = result.xpath("./summary/text()")[0]
 
         except IndexError:
-            pass
+            Log.Debug(url)
 
         except Exception as error:
-            Log.Exception(type(error))
-            Log.Exception(error.args)
             Log.Exception(error)
 
         else:
