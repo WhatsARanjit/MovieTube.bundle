@@ -22,17 +22,17 @@ def MainMenu():
 
     oc = ObjectContainer()
 
-    oc.add(DirectoryObject(key=Callback(InCinema), title=L('incinema')))
+    oc.add(DirectoryObject(key=Callback(Section, section='incinema'), title=L('incinema')))
 
     return oc
 
 ##########################################################################
-@route(PREFIX + '/incinema')
-def InCinema():
+@route(PREFIX + '/section')
+def Section(section = None):
 
-    oc = ObjectContainer(title2=L('incinema'))
+    oc = ObjectContainer(title2=L(section))
     parser = etree.XMLParser(recover=True)
-    xml = '%s/incinema.xml' % XMLDIR
+    xml = '%s/%s.xml' % (XMLDIR, section)
     list = etree.parse(xml, parser=parser).getroot()
 
     for result in list.xpath("//items/item"):
