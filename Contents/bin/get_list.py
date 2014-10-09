@@ -87,4 +87,5 @@ else:
             print "==> Writing data to XML file..."
             f.write(data)
 
+    print "=> Closing file..."
     f.close()
