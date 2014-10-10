@@ -6,6 +6,9 @@ NAME = 'MovieTube'
 ICON = 'icon-default.png'
 PREFIX = '/video/movietube'
 XMLDIR = Prefs['xmldir']
+HTTP_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36'
+}
 
 ##########################################################################
 def Start():
@@ -34,19 +37,15 @@ def Section(section):
     oc = ObjectContainer(title2=L(section))
     parser = etree.XMLParser(recover=True)
     xml = '%s/movietube.xml' % XMLDIR
-    Log(xml)
     list = etree.parse(xml, parser=parser).getroot()
 
     xsection = "//items/item[section='%s']" % section
-    Log(xsection)
     for result in list.xpath(xsection):
         try:
             title = result.xpath("./title/text()")[0]
             url = result.xpath("./video_url/text()")[0]
             thumb = result.xpath("./thumb/text()")[0]
             summary = result.xpath("./summary/text()")[0]
-            Log.Info('hello')
-            Log(xsection)
 
         except IndexError:
             Log.Debug(url)
@@ -55,11 +54,12 @@ def Section(section):
             Log.Exception(error)
 
         else:
-            oc.add(EpisodeObject(
-                title = title,
+            oc.add(VideoClipObject(
                 url = url,
+                title = title,
                 thumb = thumb,
                 summary = summary,
             ))
 
+    oc.http_headers = HTTP_HEADERS
     return oc
