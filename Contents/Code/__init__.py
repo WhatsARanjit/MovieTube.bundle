@@ -23,24 +23,30 @@ def MainMenu():
     oc = ObjectContainer()
 
     oc.add(DirectoryObject(key=Callback(Section, section='incinema'), title=L('incinema')))
+    oc.add(DirectoryObject(key=Callback(Section, section='whatsnew'), title=L('whatsnew')))
 
     return oc
 
 ##########################################################################
 @route(PREFIX + '/section')
-def Section(section = None):
+def Section(section):
 
     oc = ObjectContainer(title2=L(section))
     parser = etree.XMLParser(recover=True)
-    xml = '%s/%s.xml' % (XMLDIR, section)
+    xml = '%s/movietube.xml' % XMLDIR
+    Log(xml)
     list = etree.parse(xml, parser=parser).getroot()
 
-    for result in list.xpath("//items/item"):
+    xsection = "//items/item[section='%s']" % section
+    Log(xsection)
+    for result in list.xpath(xsection):
         try:
             title = result.xpath("./title/text()")[0]
             url = result.xpath("./video_url/text()")[0]
             thumb = result.xpath("./thumb/text()")[0]
             summary = result.xpath("./summary/text()")[0]
+            Log.Info('hello')
+            Log(xsection)
 
         except IndexError:
             Log.Debug(url)
