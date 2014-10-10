@@ -18,7 +18,7 @@ def NormalizeURL(url):
 def MetadataObjectForURL(url):
     try:
         parser = etree.XMLParser(recover=True)
-        xml = '%s/incinema.xml' % XMLDIR
+        xml = '%s/movietube.xml' % XMLDIR
         list = etree.parse(xml, parser=parser).getroot()
 
         xtitle = "//items/item[video_url='%s']/%s/text()" % (url,'title')
@@ -50,16 +50,16 @@ def MediaObjectsForURL(url):
             ],
             container = 'mp4',
             audio_codec = AudioCodec.AAC,
-            video_codec = VideoCodec.H264,
-            optimized_for_streaming = True,
-            video_resolution = '720'
+            video_codec = VideoCodec.H264
+            #optimized_for_streaming = True,
+            #video_resolution = '720'
         )
     ]
 
 ####################################################################################################
-#@indirect
+@indirect
 def PlayVideo(url):
-        return Redirect(url)
-        #return IndirectResponse(VideoClipObject, key=url)
+        #return Redirect(url)
+        return IndirectResponse(VideoClipObject, key=url)
 
 ####################################################################################################
