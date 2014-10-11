@@ -41,20 +41,32 @@ def MetadataObjectForURL(url):
 
 ####################################################################################################
 def MediaObjectsForURL(url):
-    return [
-        MediaObject(
-            parts = [
-                PartObject(
-                    key=Callback(PlayVideo, url = url)
-                )
-            ],
-            container = 'mp4',
-            audio_codec = AudioCodec.AAC,
-            video_codec = VideoCodec.H264
-            #optimized_for_streaming = True,
-            #video_resolution = '720'
-        )
-    ]
+    try:
+        parser = etree.XMLParser(recover=True)
+        xml = '%s/movietube.xml' % XMLDIR
+        list = etree.parse(xml, parser=parser).getroot()
+
+        xresolution = "//items/item[video_url='%s']/%s/text()" % (url,'resolution')
+        resolution = list.xpath(xresolution)[0]
+
+    except:
+        Log.Exception("Couldn't read XML file")
+         
+    else:
+        return [
+            MediaObject(
+                parts = [
+                    PartObject(
+                        key=Callback(PlayVideo, url = url)
+                    )
+                ],
+                container = 'mp4',
+                audio_codec = AudioCodec.AAC,
+                video_codec = VideoCodec.H264,
+                optimized_for_streaming = True,
+                video_resolution = resolution
+            )
+        ]
 
 ####################################################################################################
 @indirect
