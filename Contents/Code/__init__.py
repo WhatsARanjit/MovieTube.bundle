@@ -48,7 +48,7 @@ def Section(section):
             summary = result.xpath("./summary/text()")[0]
 
         except IndexError:
-            Log.Debug(url)
+            pass
 
         except Exception as error:
             Log.Exception(error)
