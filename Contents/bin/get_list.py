@@ -110,11 +110,23 @@ for section in POST:
                 else:
                     video_url = video
                     source = 'None'
+                
+                # Look for resolution in the result
+                expr_res = r'(\d{3,4})p'
+                if re.search(expr_res, result):
+                    resolution = re.search(expr_res, result).group(1)
+                    res_found = 'yes'
+                else:
+                    resolution = '720'
+                    res_found = 'no'
 
                 try:
-                    data = "\t<item>\n\t\t<title>%s</title>\n\t\t<summary>%s</summary>\n\t\t<thumb>%s</thumb>\n\t\t<video_url>%s</video_url>\n\t\t<source>%s</source>\n\t\t<section>%s</section>\n\t</item>\n" % (title[1], summary[1], thumb[0], video_url, source, section)
+                    data = "\t<item>\n\t\t<title>%s</title>\n\t\t<summary>%s</summary>\n\t\t<thumb>%s</thumb>\n\t\t<video_url>%s</video_url>\n\t\t<source>%s</source>\n\t\t<section>%s</section>\n\t\t<resolution found='%s'>%s</resolution>\n\t</item>\n" % (title[1], summary[1], thumb[0], video_url, source, section, res_found, resolution)
                     print "====> Writing data to XML file..."
                     f.write(data)
+                    #f.write("<result>%s</result>" % result)
+                    #f.write("<raw>%s</raw>\n" % video)
+
                 except:
                     print "====> Skipping because of weird URL..."
 
