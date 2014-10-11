@@ -11,7 +11,7 @@ HTTP_HEADERS = {
 }
 
 RE_SEARCH = r'<tr.+?>.*?</tr>'
-RE_ID = r'watch\.php\?v=([a-zA-Z0-9\-]+)'
+RE_ID = r'watch\.php\?v=([a-zA-Z0-9\-\_]+)'
 RE_URL = r'<a.+?>(.*?)</a>'
 RE_THUMB = r'src="(.+?)"'
 RE_SUMMARY = r'<h3_light class="text"></h3_light><br/><h3_light class="text">(.+?)</h3_light>'
