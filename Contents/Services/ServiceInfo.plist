@@ -14,9 +14,11 @@
         <string>http://(.+?\.)?videomega\.tv/iframe.php\?.+</string>
         <string>http://(.+?\.)?hqq\.tv/player/embed_player\.php\?.+</string>
         <string>http://(.+?\.)?embed\.movshare\.net/embed\.php\?v=.+</string>
-        <string>http://(.+?\.)?nowvideo\.sx/embed\.php\?v=.+</string>
+        <string>http://(.+?\.)?nowvideo\.[a-z]+/embed\.php\?v=.+</string>
         <string>http://allmyvideos\.net/embed\-.+?</string>
         <string>http://embed\.novamov\.com/embed\.php\?v=.+</string>
+        <string>http://www\.firedrive\.com/embed/.+</string>
+        <string>http://played\.to/embed\-.+</string>
 			</array>
 			<key>TestURLs</key>
 			<array>
@@ -26,6 +28,8 @@
         <string>http://embed.nowvideo.sx/embed.php?v=53ddfa85dbf2c</string>
         <string>http://allmyvideos.net/embed-hw9ui4l89aqd.html</string>
         <string>http://embed.novamov.com/embed.php?v=f34c80718e9ae</string>
+        <string>http://www.firedrive.com/embed/1Q1IZFQV7ZN8Z</string>
+        <string>http://played.to/embed-x57sfggexcze-1070x600.html</string>
 			</array>
 		</dict>
 	</dict>
