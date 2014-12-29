@@ -48,6 +48,12 @@ def MediaObjectsForURL(url):
 
         xresolution = "//items/item[video_url='%s']/%s/text()" % (url,'resolution')
         resolution = list.xpath(xresolution)[0]
+        bitrates = {
+          '1080': 3000,
+          '720': 1500,
+          '480': 1125,
+          '360': 750
+        }
 
     except:
         Log.Exception("Couldn't read XML file")
@@ -57,20 +63,22 @@ def MediaObjectsForURL(url):
             MediaObject(
                 parts = [
                     PartObject(
-                        key=Callback(PlayVideo, url = url)
+                        key=Callback(PlayVideo, url = url, res=resolution)
                     )
                 ],
-                container = 'mp4',
-                audio_codec = AudioCodec.AAC,
+                video_resolution = resolution,
+                bitrate = bitrate,
+                container = Container.MP4,
                 video_codec = VideoCodec.H264,
-                optimized_for_streaming = True,
-                video_resolution = resolution
-            )
+                audio_codec = AudioCodec.AAC,
+                audio_channels = 2,
+                optimized_for_streaming = True
+            ) for resolution, bitrate in [(resolution, bitrates[resolution])]
         ]
 
 ####################################################################################################
 @indirect
-def PlayVideo(url):
+def PlayVideo(url, res):
         #return Redirect(url)
         return IndirectResponse(VideoClipObject, key=url)
 

@@ -12,13 +12,14 @@
 				<string>http://www\.movietubenow\.com/watch\.php\?v=.+</string>
 				<string>http://(m\.)?genvideos\.com/get_video\?.+</string>
         <string>http://(.+?\.)?videomega\.tv/iframe.php\?.+</string>
-        <string>http://(.+?\.)?hqq\.tv/player/embed_player\.php\?.+</string>
+        <string>http://hqq\.tv/player/embed_player\.php\?vid=.+</string>
         <string>http://(.+?\.)?embed\.movshare\.net/embed\.php\?v=.+</string>
         <string>http://(.+?\.)?nowvideo\.[a-z]+/embed\.php\?v=.+</string>
         <string>http://allmyvideos\.net/embed\-.+?</string>
         <string>http://embed\.novamov\.com/embed\.php\?v=.+</string>
         <string>http://www\.firedrive\.com/embed/.+</string>
         <string>http://played\.to/embed\-.+</string>
+        <string>https?://(.+?\.)?googlevideo\.com/videoplayback\?.+</string>
 			</array>
 			<key>TestURLs</key>
 			<array>

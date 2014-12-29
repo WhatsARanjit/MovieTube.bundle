@@ -99,7 +99,7 @@ for section in POST:
                     expr = r'src="(https?://.*?)"'
                     video_url = re.findall(expr, urllib2.unquote(video).decode('utf8'))[0]
                     source = 'VJ Player'
-                elif video.find('vkplayer') > -1:
+                elif video.find('vkplayer') > -1 and video.find('iframe') < 0:
                     expr = r'data="(https?://.*?)"'
                     video_url = re.findall(expr, urllib2.unquote(video).decode('utf8'))[0]
                     source = 'VK Player'
